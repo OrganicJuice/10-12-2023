@@ -29,5 +29,43 @@ GROUP BY RecipeClassDescription
 ORDER BY Frequency DESC "
 )
 
-select_res <- dbFetch(select_q)})
+Recipe_Class_Count <- dbFetch(select_q)})
+dbClearResult(select_q)
+
+library(ggplot2)
+
+ggplot(data=Recipe_Class_Count, aes(x=reorder(RecipeClassDescription, -Frequency), y=Frequency, fill = RecipeClassDescription)) +
+  geom_bar(stat = "identity") + 
+  labs(x = "Recipe Class") +
+  theme_minimal()
+
+
+# NEXT 
+
+dbListFields(con, "Ingredient_Classes")
+
+dbListFields(con, "Ingredient")
+
+select_r <- dbSendQuery(
+  conn = con, 
+  statement = " SELECT IngredientClassDescription,
+COUNT(IngredientClassDescription) AS Frequency
+FROM Ingredient_Classes ic
+JOIN Ingredients i ON i.IngredientClassID = ic.IngredientClassID
+GROUP BY IngredientClassDescription
+ORDER BY Frequency DESC "
+)
+
+Ingredient_Class_Count <- dbFetch(select_r)
+
+library(ggplot2)
+
+ggplot(data=Ingredient_Class_Count, aes(x=reorder(IngredientClassDescription, -Frequency), y=Frequency, fill = IngredientClassDescription)) +
+  geom_bar(stat = "identity") + 
+  labs(x = "Ingredient Class") +
+  theme_minimal()
+
+
+
+
 
